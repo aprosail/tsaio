@@ -1,0 +1,8 @@
+{
+  "name": "@tsaio/hash",
+  "description": "Hash code generator for tsaio css class names.",
+  "version": "0.0.0",
+  "dependencies": {
+    "@tsaio/tsconfig": "workspace:*"
+  }
+}
