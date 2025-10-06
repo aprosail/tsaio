@@ -105,6 +105,26 @@ describe("tracePosition", () => {
 })
 
 describe("detectPackageRoot", () => {
+  test("returns undefined for HTTP URLs", () => {
+    const mockExistsSync = vi.fn(() => false)
+    const mockStatSync = vi.fn(() => ({
+      isFile: () => false,
+      isDirectory: () => false,
+    }))
+
+    const detectPackageRoot = createDetectPackageRoot(
+      mockExistsSync,
+      mockStatSync,
+    )
+
+    expect(
+      detectPackageRoot("http://example.com/path/to/file.ts"),
+    ).toBeUndefined()
+    expect(
+      detectPackageRoot("https://example.com/path/to/file.ts"),
+    ).toBeUndefined()
+  })
+
   test("from current directory", () => {
     const mockExistsSync = vi.fn((path: string) => {
       return path === "/mock/project/package.json" || path === "/mock/project"
@@ -234,6 +254,25 @@ function createDetectPackageRoot(
 }
 
 describe("hashPosition", () => {
+  test("handles HTTP URLs in detectPackageRoot", () => {
+    const mockExistsSync = vi.fn(() => false)
+    const mockStatSync = vi.fn(() => ({
+      isFile: () => false,
+      isDirectory: () => false,
+    }))
+
+    const detectPackageRoot = createDetectPackageRoot(
+      mockExistsSync,
+      mockStatSync,
+    )
+
+    expect(detectPackageRoot("ftp://example.com/path/file.ts")).toBeUndefined()
+    expect(detectPackageRoot("http://example.com/path/file.ts")).toBeUndefined()
+    expect(
+      detectPackageRoot("https://example.com/path/file.ts"),
+    ).toBeUndefined()
+  })
+
   test("returns consistent hash for same position", () => {
     function getHash() {
       return hashPosition()

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto"
 import { existsSync, statSync } from "node:fs"
-import { dirname, join, resolve } from "node:path"
+import { dirname, join, relative, resolve } from "node:path"
 
 export type CodePosition = {
   url: string
@@ -55,15 +55,20 @@ export function tracePosition(depth = 2): CodePosition {
 /**
  * Detects the root directory of a package by looking for package.json.
  *
- * 1. The path may not exist, but it will also detect any existing parent dirs.
- * 2. The path may be a file or a dir, when file, just detect from its dir.
- * 3. Once path not provided, just detect from cwd.
- * 4. When completely not inside a package, just return undefined.
+ * 1. If the path is a URL (starts with http:// or https://), returns undefined.
+ * 2. The path may not exist, but it will also detect any existing parent dirs.
+ * 3. The path may be a file or a dir, when file, just detect from its dir.
+ * 4. Once path not provided, just detect from cwd.
+ * 5. When completely not inside a package, just return undefined.
  *
  * @param path file or directory path, default to cwd.
  * @returns directory path where package.json locates, undefined if not found.
  */
 export function detectPackageRoot(path?: string): string | undefined {
+  if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
+    return undefined
+  }
+
   const startPath = path ? resolve(path) : process.cwd()
   const searchPath =
     (existsSync(startPath) && statSync(startPath).isFile()) ||
@@ -82,6 +87,7 @@ export function detectPackageRoot(path?: string): string | undefined {
 /**
  * Hash code (hex) of where this function is called.
  * The hash value is hashed from traced {@link CodePosition} object data.
+ * If the URL is a file path within a package, uses relative path to package root.
  *
  * @param length the length of the hash code (default: 16).
  * @param algorithm the hashing algorithm to use (default: "sha256").
@@ -91,7 +97,19 @@ export function hashPosition(length = 16, algorithm = "sha256"): string {
   const position = tracePosition()
   const hash = createHash(algorithm)
 
-  hash.update(position.url)
+  let urlToHash = position.url
+  const packageRoot = detectPackageRoot(position.url)
+  if (packageRoot && position.url.startsWith("file://")) {
+    const filePath = position.url.replace("file://", "")
+    try {
+      const relativePath = relative(packageRoot, filePath)
+      urlToHash = relativePath
+    } catch {
+      urlToHash = position.url
+    }
+  }
+
+  hash.update(urlToHash)
   hash.update(new Uint8Array(new Uint32Array([position.line]).buffer))
   hash.update(new Uint8Array(new Uint32Array([position.column]).buffer))
 
