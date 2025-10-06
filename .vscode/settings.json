@@ -13,6 +13,7 @@
   // "explorer.fileNesting.enabled": true,
   // "explorer.fileNesting.expand": false,
   "explorer.fileNesting.patterns": {
+    "*.tsx": "${capture}.test.ts",
     "*.ts": "${capture}.test.ts",
     "package.json": "pnpm-lock.yaml",
     "readme.md": "LICENSE"
@@ -20,5 +21,5 @@
 
   // Code spell checker (require recommended extensions).
   "cSpell.ignorePaths": ["node_modules", "out", "pnpm-lock.yaml"],
-  "cSpell.words": ["esbenp", "esbuild", "oxlint", "tsaio", "vitest"]
+  "cSpell.words": ["esbenp", "esbuild", "oxlint", "tsaio", "vite", "vitest"]
 }
