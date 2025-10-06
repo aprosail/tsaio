@@ -10,7 +10,7 @@
     "dev": "vitest"
   },
   "devDependencies": {
-    "@types/node": "^24.6.2",
+    "@types/node": "^24.7.0",
     "oxlint": "^1.19.0",
     "prettier": "^3.6.2",
     "prettier-plugin-sh": "^0.18.0",
