@@ -1,0 +1,7 @@
+{
+  "name": "tsaio",
+  "description": "FullStack development with almost all code in TypeScript.",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true
+}
