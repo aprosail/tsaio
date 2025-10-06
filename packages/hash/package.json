@@ -2,6 +2,10 @@
   "name": "@tsaio/hash",
   "description": "Hash code generator for tsaio css class names.",
   "version": "0.0.0",
+  "scripts": {
+    "test": "vitest run",
+    "dev": "vitest"
+  },
   "dependencies": {
     "@tsaio/tsconfig": "workspace:*"
   }
