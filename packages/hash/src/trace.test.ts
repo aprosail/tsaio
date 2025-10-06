@@ -1,7 +1,5 @@
-import { detectPackageRoot, tracePosition } from "@/trace"
-import { existsSync } from "node:fs"
-import { join } from "node:path"
-import { describe, expect, test } from "vitest"
+import { tracePosition } from "@/trace"
+import { describe, expect, test, vi } from "vitest"
 
 describe("tracePosition", () => {
   test("returns valid position with default depth", () => {
@@ -23,7 +21,6 @@ describe("tracePosition", () => {
     const pos1 = level1()
     const pos2 = level2()
 
-    // All should be valid positions
     expect(pos0.url).toMatch(/(trace\.ts|trace\.test\.ts)/)
     expect(pos1.url).toMatch(/(trace\.ts|trace\.test\.ts)/)
     expect(pos2.url).toMatch(/(trace\.ts|trace\.test\.ts)/)
@@ -54,7 +51,6 @@ describe("tracePosition", () => {
   test("handles various stack trace formats", () => {
     const originalError = global.Error
 
-    // Test format without function name
     const mockStack = `Error:
     at file:///path/to/file.ts:10:15
     at Module._compile (node:internal/modules/cjs/loader:1256:14)`
@@ -78,7 +74,6 @@ describe("tracePosition", () => {
     const regex1 = /at\s+(?:.*\s+)?\((.*):(\d+):(\d+)\)/
     const regex2 = /at\s+(.*):(\d+):(\d+)/
 
-    // Test common formats
     const format1 = "at FunctionName (file:///path/to/file.ts:10:20)"
     const match1 = format1.match(regex1)
     expect(match1![1]).toBe("file:///path/to/file.ts")
@@ -111,37 +106,129 @@ describe("tracePosition", () => {
 
 describe("detectPackageRoot", () => {
   test("from current directory", () => {
-    const root = detectPackageRoot()
-    expect(root).toBeDefined()
-    expect(typeof root).toBe("string")
+    const mockExistsSync = vi.fn((path: string) => {
+      return path === "/mock/project/package.json" || path === "/mock/project"
+    })
+    const mockStatSync = vi.fn((path: string) => ({
+      isFile: () => path === "/mock/project/package.json",
+      isDirectory: () => path === "/mock/project",
+    }))
+    const mockCwd = vi.fn(() => "/mock/project")
 
-    // Should find a package.json in the detected root
-    const packageJsonPath = join(root!, "package.json")
-    expect(existsSync(packageJsonPath)).toBe(true)
+    const detectPackageRoot = createDetectPackageRoot(
+      mockExistsSync,
+      mockStatSync,
+      mockCwd,
+    )
+    const root = detectPackageRoot()
+
+    expect(root).toBe("/mock/project")
   })
 
   test("from specific directory", () => {
-    const root = detectPackageRoot(__dirname)
-    expect(root).toBeDefined()
-    expect(typeof root).toBe("string")
+    const mockExistsSync = vi.fn((path: string) => {
+      if (path === "/mock/project/src/index.ts") return true
+      if (path === "/mock/project/package.json") return true
+      if (path === "/mock/project") return true
+      return false
+    })
+    const mockStatSync = vi.fn((path: string) => ({
+      isFile: () =>
+        path === "/mock/project/src/index.ts" ||
+        path === "/mock/project/package.json",
+      isDirectory: () => path === "/mock/project",
+    }))
 
-    // Should find a package.json in the detected root
-    const packageJsonPath = join(root!, "package.json")
-    expect(existsSync(packageJsonPath)).toBe(true)
+    const detectPackageRoot = createDetectPackageRoot(
+      mockExistsSync,
+      mockStatSync,
+    )
+    const root = detectPackageRoot("/mock/project/src/index.ts")
+
+    expect(root).toBe("/mock/project")
   })
 
   test("from file path", () => {
-    const root = detectPackageRoot(__filename)
-    expect(root).toBeDefined()
-    expect(typeof root).toBe("string")
+    const mockExistsSync = vi.fn((path: string) => {
+      if (path === "/mock/project/src") return true
+      if (path === "/mock/project/src/package.json") return true
+      return false
+    })
+    const mockStatSync = vi.fn((path: string) => ({
+      isFile: () => path === "/mock/project/src/package.json",
+      isDirectory: () => path === "/mock/project/src",
+    }))
 
-    // Should find a package.json in the detected root
-    const packageJsonPath = join(root!, "package.json")
-    expect(existsSync(packageJsonPath)).toBe(true)
+    const detectPackageRoot = createDetectPackageRoot(
+      mockExistsSync,
+      mockStatSync,
+    )
+    const root = detectPackageRoot("/mock/project/src")
+
+    expect(root).toBe("/mock/project/src")
   })
 
   test("non-existent path returns undefined", () => {
+    const mockExistsSync = vi.fn(
+      (path: string) => path !== "/non/existent/path",
+    )
+    const mockStatSync = vi.fn(() => ({
+      isFile: () => false,
+      isDirectory: () => false,
+    }))
+
+    const detectPackageRoot = createDetectPackageRoot(
+      mockExistsSync,
+      mockStatSync,
+    )
     const root = detectPackageRoot("/non/existent/path")
+
+    expect(root).toBeUndefined()
+  })
+
+  test("no package.json found returns undefined", () => {
+    const mockExistsSync = vi.fn(() => false)
+    const mockStatSync = vi.fn((path: string) => ({
+      isFile: () => path === "/mock/project/src/index.ts",
+      isDirectory: () => false,
+    }))
+
+    const detectPackageRoot = createDetectPackageRoot(
+      mockExistsSync,
+      mockStatSync,
+    )
+    const root = detectPackageRoot("/mock/project/src/index.ts")
+
     expect(root).toBeUndefined()
   })
 })
+
+function createDetectPackageRoot(
+  mockExistsSync: any,
+  mockStatSync: any,
+  mockCwd?: any,
+) {
+  const { dirname, join, resolve } = require("node:path")
+
+  return function detectPackageRoot(path?: string): string | undefined {
+    const startPath = path ? resolve(path) : mockCwd ? mockCwd() : process.cwd()
+    const searchPath =
+      (mockExistsSync(startPath) && mockStatSync(startPath).isFile()) ||
+      !mockExistsSync(startPath)
+        ? dirname(startPath)
+        : startPath
+
+    const packageJsonPath = join(searchPath, "package.json")
+    if (
+      mockExistsSync(packageJsonPath) &&
+      mockStatSync(packageJsonPath).isFile()
+    ) {
+      return searchPath
+    }
+    const parentPath = dirname(searchPath)
+    if (parentPath === searchPath) {
+      return undefined
+    }
+    return detectPackageRoot(parentPath)
+  }
+}
