@@ -15,11 +15,27 @@
   "explorer.fileNesting.patterns": {
     "*.tsx": "${capture}.test.ts",
     "*.ts": "${capture}.test.ts",
+    "next.config.ts": "next-env.d.ts",
     "package.json": "pnpm-lock.yaml",
     "readme.md": "LICENSE"
   },
 
   // Code spell checker (require recommended extensions).
-  "cSpell.ignorePaths": ["node_modules", "out", "pnpm-lock.yaml"],
-  "cSpell.words": ["esbenp", "esbuild", "oxlint", "tsaio", "vite", "vitest"]
+  "cSpell.ignorePaths": [
+    ".next",
+    "node_modules",
+    "out",
+    "next-env.d.ts",
+    "pnpm-lock.yaml"
+  ],
+  "cSpell.words": [
+    "esbenp",
+    "esbuild",
+    "oxlint",
+    "tsaio",
+    "turbopack",
+    "vercel",
+    "vite",
+    "vitest"
+  ]
 }

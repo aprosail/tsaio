@@ -1,0 +1,8 @@
+# Transform output.
+/app
+
+# Next special ignores.
+.vercel
+.next
+build
+next-env.d.ts
