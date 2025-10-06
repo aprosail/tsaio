@@ -5,11 +5,17 @@
   "private": true,
   "scripts": {
     "format": "prettier --write .",
-    "review": "prettier --check . && oxlint"
+    "review": "prettier --check . && oxlint",
+    "test": "vitest run",
+    "dev": "vitest"
   },
   "devDependencies": {
+    "@types/node": "^24.6.2",
     "oxlint": "^1.19.0",
     "prettier": "^3.6.2",
-    "prettier-plugin-sh": "^0.18.0"
+    "prettier-plugin-sh": "^0.18.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }

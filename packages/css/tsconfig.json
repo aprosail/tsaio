@@ -1,0 +1,5 @@
+{
+  "extends": "@tsaio/tsconfig/tsconfig.json",
+  "include": ["src/**/*.ts"],
+  "compilerOptions": { "paths": { "@/*": ["./src/*"] } }
+}

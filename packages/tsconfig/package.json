@@ -1,0 +1,9 @@
+{
+  "name": "@tsaio/tsconfig",
+  "description": "Shared TypeScript configuration and parsing utils.",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./tsconfig.json": "./tsconfig.json"
+  }
+}

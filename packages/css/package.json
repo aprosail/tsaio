@@ -1,0 +1,13 @@
+{
+  "name": "@tsaio/css",
+  "description": "Extract CSS code from TypeScript files.",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "dev": "vitest"
+  },
+  "dependencies": {
+    "@tsaio/tsconfig": "workspace:*"
+  }
+}
