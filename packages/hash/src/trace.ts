@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto"
 import { existsSync, statSync } from "node:fs"
 import { dirname, join, resolve } from "node:path"
 
@@ -9,13 +10,14 @@ export type CodePosition = {
 
 /**
  * Traces the code position at the specified call stack depth.
+ * The default depth will trace where this function is called.
  *
- * @param depth the call stack depth to trace (default: 1).
+ * @param depth the call stack depth to trace (default: 2).
  * @returns a CodePosition object containing URL, line, and column information.
  * @throws error if unable to parse the stack trace or
  * if the specified depth is out of bounds.
  */
-export function tracePosition(depth = 1): CodePosition {
+export function tracePosition(depth = 2): CodePosition {
   const stack = new Error().stack
   if (!stack) throw new Error("unable to get mock error stack")
 
@@ -75,4 +77,23 @@ export function detectPackageRoot(path?: string): string | undefined {
   }
   const parentPath = dirname(searchPath)
   return parentPath !== searchPath ? detectPackageRoot(parentPath) : undefined
+}
+
+/**
+ * Hash code (hex) of where this function is called.
+ * The hash value is hashed from traced {@link CodePosition} object data.
+ *
+ * @param length the length of the hash code (default: 16).
+ * @param algorithm the hashing algorithm to use (default: "sha256").
+ * @returns a hex string of the hash code.
+ */
+export function hashPosition(length = 16, algorithm = "sha256"): string {
+  const position = tracePosition()
+  const hash = createHash(algorithm)
+
+  hash.update(position.url)
+  hash.update(new Uint8Array(new Uint32Array([position.line]).buffer))
+  hash.update(new Uint8Array(new Uint32Array([position.column]).buffer))
+
+  return hash.digest("hex").slice(0, length)
 }

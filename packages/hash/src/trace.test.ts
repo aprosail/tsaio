@@ -1,4 +1,4 @@
-import { tracePosition } from "@/trace"
+import { hashPosition, tracePosition } from "@/trace"
 import { describe, expect, test, vi } from "vitest"
 
 describe("tracePosition", () => {
@@ -232,3 +232,107 @@ function createDetectPackageRoot(
     return detectPackageRoot(parentPath)
   }
 }
+
+describe("hashPosition", () => {
+  test("returns consistent hash for same position", () => {
+    function getHash() {
+      return hashPosition()
+    }
+
+    const hash1 = getHash()
+    const hash2 = getHash()
+
+    expect(hash1).toBe(hash2)
+    expect(hash1).toMatch(/^[a-f0-9]{16}$/)
+  })
+
+  test("returns different hash for different positions", () => {
+    function getHashAtLine1() {
+      return hashPosition()
+    }
+
+    function getHashAtLine2() {
+      return hashPosition()
+    }
+
+    const hash1 = getHashAtLine1()
+    const hash2 = getHashAtLine2()
+    expect(hash1).not.toBe(hash2)
+  })
+
+  test("respects custom length parameter", () => {
+    const hash8 = hashPosition(8)
+    const hash32 = hashPosition(32)
+
+    expect(hash8).toHaveLength(8)
+    expect(hash32).toHaveLength(32)
+    expect(hash8).toMatch(/^[a-f0-9]+$/)
+    expect(hash32).toMatch(/^[a-f0-9]+$/)
+  })
+
+  test("respects custom algorithm parameter", () => {
+    const sha256Hash = hashPosition(16, "sha256")
+    const md5Hash = hashPosition(16, "md5")
+
+    expect(sha256Hash).toHaveLength(16)
+    expect(md5Hash).toHaveLength(16)
+    expect(sha256Hash).toMatch(/^[a-f0-9]+$/)
+    expect(md5Hash).toMatch(/^[a-f0-9]+$/)
+
+    expect(sha256Hash).not.toBe(md5Hash)
+  })
+
+  test("works with mock tracePosition data", () => {
+    const mockPosition = {
+      url: "file:///mock/test.ts",
+      line: 42,
+      column: 10,
+    }
+
+    function hashPositionWithMock(position: typeof mockPosition) {
+      const hash = require("node:crypto").createHash("sha256")
+      hash.update(position.url)
+      hash.update(new Uint8Array(new Uint32Array([position.line]).buffer))
+      hash.update(new Uint8Array(new Uint32Array([position.column]).buffer))
+      return hash.digest("hex").slice(0, 16)
+    }
+
+    const hash = hashPositionWithMock(mockPosition)
+    expect(hash).toMatch(/^[a-f0-9]{16}$/)
+
+    const hash2 = hashPositionWithMock(mockPosition)
+    expect(hash).toBe(hash2)
+  })
+
+  test("handles different mock positions", () => {
+    function hashPositionWithMock(position: {
+      url: string
+      line: number
+      column: number
+    }) {
+      const hash = require("node:crypto").createHash("sha256")
+      hash.update(position.url)
+      hash.update(new Uint8Array(new Uint32Array([position.line]).buffer))
+      hash.update(new Uint8Array(new Uint32Array([position.column]).buffer))
+      return hash.digest("hex").slice(0, 16)
+    }
+
+    const position1 = { url: "file:///mock/file1.ts", line: 10, column: 5 }
+    const position2 = { url: "file:///mock/file2.ts", line: 20, column: 15 }
+
+    const hash1 = hashPositionWithMock(position1)
+    const hash2 = hashPositionWithMock(position2)
+
+    expect(hash1).not.toBe(hash2)
+    expect(hash1).toMatch(/^[a-f0-9]{16}$/)
+    expect(hash2).toMatch(/^[a-f0-9]{16}$/)
+  })
+
+  test("default parameters produce valid hash", () => {
+    const hash = hashPosition()
+
+    expect(hash).toBeTruthy()
+    expect(hash).toHaveLength(16)
+    expect(hash).toMatch(/^[a-f0-9]+$/)
+  })
+})
