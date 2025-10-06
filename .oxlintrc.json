@@ -1,4 +1,5 @@
 {
+  "plugins": ["react", "react-perf"],
   "rules": {
     "no-console": "warn"
   }
