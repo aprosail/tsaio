@@ -1,0 +1,22 @@
+{
+  "name": "@tsaio/dev",
+  "description": "Shared devtools and settings behind the tsaio packages.",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vitest",
+    "test": "vitest run",
+    "build": "rolldown --config rolldown.config.ts"
+  },
+  "exports": {
+    "./tsconfig.json": "./settings/tsconfig.json",
+    ".": {
+      "types": "./out/index.d.ts",
+      "import": "./out/index.js",
+      "default": "./out/index.js"
+    }
+  },
+  "dependencies": {
+    "glob": "^11.0.3"
+  }
+}

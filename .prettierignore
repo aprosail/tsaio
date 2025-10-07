@@ -1,2 +1,9 @@
 # Git tracked but auto-generated files.
 pnpm-lock.yaml
+
+# Special ignores in the child packages.
+/example/next/app
+.vercel
+.next
+build
+next-env.d.ts

@@ -15,9 +15,21 @@
   "explorer.fileNesting.patterns": {
     "*.tsx": "${capture}.test.ts",
     "*.ts": "${capture}.test.ts",
+    "*.js": "${capture}.d.ts, ${capture}.js.map, ${capture}.d.ts.map",
     "next.config.ts": "next-env.d.ts",
     "package.json": "pnpm-lock.yaml",
     "readme.md": "LICENSE"
+  },
+
+  // Output bundle visualizations.
+  "editor.wordWrapColumn": 80,
+  "[javascript]": { "editor.wordWrap": "wordWrapColumn" },
+  "[css]": { "editor.wordWrap": "wordWrapColumn" },
+  "[json]": { "editor.wordWrap": "wordWrapColumn" },
+
+  // Special files.
+  "files.associations": {
+    "*.map": "json"
   },
 
   // Code spell checker (require recommended extensions).
@@ -32,6 +44,8 @@
     "esbenp",
     "esbuild",
     "oxlint",
+    "pino",
+    "rolldown",
     "tsaio",
     "turbopack",
     "vercel",
