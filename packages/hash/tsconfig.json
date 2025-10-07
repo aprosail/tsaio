@@ -1,5 +1,5 @@
 {
-  "extends": "@tsaio/tsconfig/tsconfig.json",
+  "extends": "@tsaio/dev/tsconfig.json",
   "include": ["src"],
   "compilerOptions": { "paths": { "@/*": ["./src/*"] } }
 }

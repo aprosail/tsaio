@@ -2,11 +2,23 @@
   "name": "@tsaio/hash",
   "description": "Hash code generator for tsaio css class names.",
   "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./out/index.js",
+      "import": "./out/index.js",
+      "types": "./out/index.d.ts"
+    }
+  },
   "scripts": {
+    "build": "rolldown --config rolldown.config.ts",
     "test": "vitest run",
     "dev": "vitest"
   },
   "dependencies": {
-    "@tsaio/tsconfig": "workspace:*"
+    "@tsaio/utils": "workspace:*"
+  },
+  "devDependencies": {
+    "@tsaio/dev": "workspace:*"
   }
 }
