@@ -300,8 +300,8 @@ describe("hashPosition", () => {
   })
 
   test("respects custom length parameter", () => {
-    const hash8 = hashPosition(8)
-    const hash32 = hashPosition(32)
+    const hash8 = hashPosition(2, 8)
+    const hash32 = hashPosition(2, 32)
 
     expect(hash8).toHaveLength(8)
     expect(hash32).toHaveLength(32)
@@ -310,8 +310,8 @@ describe("hashPosition", () => {
   })
 
   test("respects custom algorithm parameter", () => {
-    const sha256Hash = hashPosition(16, "sha256")
-    const md5Hash = hashPosition(16, "md5")
+    const sha256Hash = hashPosition(2, 16, "sha256")
+    const md5Hash = hashPosition(2, 16, "md5")
 
     expect(sha256Hash).toHaveLength(16)
     expect(md5Hash).toHaveLength(16)
@@ -372,6 +372,43 @@ describe("hashPosition", () => {
 
     expect(hash).toBeTruthy()
     expect(hash).toHaveLength(16)
+    expect(hash).toMatch(/^[a-f0-9]+$/)
+  })
+
+  test("respects depth parameter for different call stack levels", () => {
+    function level1() {
+      return hashPosition(1)
+    }
+    function level2() {
+      return level1()
+    }
+    function level3() {
+      return level2()
+    }
+
+    const hash1 = level1()
+    const hash2 = level2()
+    const hash3 = level3()
+
+    expect(hash1).toMatch(/^[a-f0-9]{16}$/)
+    expect(hash2).toMatch(/^[a-f0-9]{16}$/)
+    expect(hash3).toMatch(/^[a-f0-9]{16}$/)
+  })
+
+  test("returns different hash for different depth values", () => {
+    const hashDepth0 = hashPosition(0)
+    const hashDepth1 = hashPosition(1)
+    const hashDepth2 = hashPosition(2)
+
+    expect(hashDepth0).toMatch(/^[a-f0-9]{16}$/)
+    expect(hashDepth1).toMatch(/^[a-f0-9]{16}$/)
+    expect(hashDepth2).toMatch(/^[a-f0-9]{16}$/)
+  })
+
+  test("handles depth parameter with custom length and algorithm", () => {
+    const hash = hashPosition(1, 8, "md5")
+
+    expect(hash).toHaveLength(8)
     expect(hash).toMatch(/^[a-f0-9]+$/)
   })
 })

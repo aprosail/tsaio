@@ -3,11 +3,27 @@
   "description": "Extract CSS code from TypeScript files.",
   "version": "0.0.0",
   "type": "module",
+  "export": {
+    ".": {
+      "default": "./out/index.js",
+      "import": "./out/index.js",
+      "types": "./out/index.d.ts"
+    },
+    "./transform": {
+      "default": "./out/transform.js",
+      "import": "./out/transform.js",
+      "types": "./out/transform.d.ts"
+    }
+  },
   "scripts": {
+    "build": "rolldown --config rolldown.config.ts",
     "test": "vitest run",
     "dev": "vitest"
   },
   "dependencies": {
+    "@tsaio/hash": "workspace:*"
+  },
+  "devDependencies": {
     "@tsaio/dev": "workspace:*"
   }
 }

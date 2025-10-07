@@ -13,6 +13,12 @@ export type CodePosition = {
  * Traces the code position at the specified call stack depth.
  * The default depth will trace where this function is called.
  *
+ * Depth parameter explanation:
+ * - Depth 0 traces the line where tracePosition is called
+ * - Depth 1 traces the caller of tracePosition
+ * - Depth 2 traces the caller's caller, and so on
+ * - Recommended default is 2 to trace where tracePosition is called
+ *
  * @param depth the call stack depth to trace (default: 2).
  * @returns a CodePosition object containing URL, line, and column information.
  * @throws error if unable to parse the stack trace or
@@ -90,12 +96,23 @@ export function detectPackageRoot(path?: string): string | undefined {
  * The hash value is hashed from traced {@link CodePosition} object data.
  * If the URL is a file path within a package, uses relative path to package root.
  *
+ * Depth parameter explanation:
+ * - Depth 0 traces the line where hashPosition is called
+ * - Depth 1 traces the caller of hashPosition
+ * - Depth 2 traces the caller's caller, and so on
+ * - Recommended default is 2 to trace where hashPosition is called
+ *
+ * @param depth the call stack depth to trace (default: 2).
  * @param length the length of the hash code (default: 16).
  * @param algorithm the hashing algorithm to use (default: "sha256").
  * @returns a hex string of the hash code.
  */
-export function hashPosition(length = 16, algorithm = "sha256"): string {
-  const position = tracePosition()
+export function hashPosition(
+  depth = 2,
+  length = 16,
+  algorithm = "sha256",
+): string {
+  const position = tracePosition(depth)
   const hash = createHash(algorithm)
 
   let urlToHash = position.url

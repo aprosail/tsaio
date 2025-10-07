@@ -85,6 +85,10 @@ importers:
 
   packages/css:
     dependencies:
+      '@tsaio/hash':
+        specifier: workspace:*
+        version: link:../hash
+    devDependencies:
       '@tsaio/dev':
         specifier: workspace:*
         version: link:../dev
@@ -96,12 +100,6 @@ importers:
       '@tsaio/utils':
         specifier: workspace:*
         version: link:../utils
-    devDependencies:
-      '@tsaio/dev':
-        specifier: workspace:*
-        version: link:../dev
-
-  packages/shared:
     devDependencies:
       '@tsaio/dev':
         specifier: workspace:*
