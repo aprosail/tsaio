@@ -1,6 +1,6 @@
+import { removePrefix, removeSuffix } from "@/utils.js"
 import { existsSync, readFileSync } from "node:fs"
 import { join, resolve } from "node:path"
-import { removeSuffix } from "./utils.js"
 
 /**
  * Parse path mapping to aliases.
@@ -20,17 +20,12 @@ function parsePathsToAliases(
   if (!paths || typeof paths !== "object") return {}
 
   const aliases: Record<string, string> = {}
-
   for (const [key, value] of Object.entries(paths)) {
     if (!Array.isArray(value) || value.length === 0) continue
-    const cleanKey = removeSuffix(key, "/*")
-    const firstPath = value[0]
-    const cleanPath = removeSuffix(firstPath, "/*")
-    const normalizedPath = cleanPath.startsWith("./")
-      ? cleanPath.slice(2)
-      : cleanPath
-    const absolutePath = resolve(workingDir, normalizedPath)
-    aliases[cleanKey] = absolutePath
+    aliases[removeSuffix(key, "/*")] = resolve(
+      workingDir,
+      removePrefix(removeSuffix(value[0], "/*"), "./"),
+    )
   }
   return aliases
 }
