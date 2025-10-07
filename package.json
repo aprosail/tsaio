@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "postinstall": "cd packages/dev; pnpm build; cd ../..; tsx build.ts",
     "format": "prettier --write .",
     "review": "prettier --check . && oxlint",
     "test": "vitest run",
