@@ -4,9 +4,8 @@ import type { PackageInfo } from "./types.js"
  * Performs topological sort on packages based on dependencies.
  *
  * @param packages - Array of packages to sort.
- * @returns {PackageInfo[]} Packages sorted in dependency order.
  */
-export function topologicalSort(packages: PackageInfo[]): PackageInfo[] {
+export function topologicalSort(packages: PackageInfo[]) {
   const visited = new Set<string>()
   const result: PackageInfo[] = []
 

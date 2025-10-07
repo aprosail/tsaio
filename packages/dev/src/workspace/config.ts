@@ -6,12 +6,10 @@ import type { WorkspaceConfig } from "./types.js"
  * Detects whether workspace configuration exists.
  *
  * @param root - The root directory of the workspace.
- * @returns {boolean} True if both package.json and pnpm-workspace.yaml exist.
  */
-export function detectWorkspaceConfig(root: string): boolean {
+export function detectWorkspaceConfig(root: string) {
   const packageJsonPath = join(root, "package.json")
   const workspaceYamlPath = join(root, "pnpm-workspace.yaml")
-
   return existsSync(packageJsonPath) && existsSync(workspaceYamlPath)
 }
 
@@ -19,7 +17,6 @@ export function detectWorkspaceConfig(root: string): boolean {
  * Parses pnpm-workspace.yaml configuration.
  *
  * @param root - The root directory of the workspace.
- * @returns {WorkspaceConfig} The parsed workspace configuration.
  * @throws {Error} If pnpm-workspace.yaml is not found.
  */
 export function parseWorkspaceConfig(root: string): WorkspaceConfig {

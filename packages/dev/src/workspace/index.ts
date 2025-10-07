@@ -1,3 +1,4 @@
+import { logger } from "@/logger.js"
 import { buildPackagesParallel } from "@/workspace/build"
 import { detectWorkspaceConfig, parseWorkspaceConfig } from "@/workspace/config"
 import { getWorkspacePackages } from "@/workspace/packages"
@@ -11,9 +12,8 @@ export type { PackageInfo, WorkspaceConfig } from "@/workspace/types"
  *
  * @param root - The root directory where the pnpm workspace is located.
  * @throws {Error} If workspace configuration (package.json and pnpm-workspace.yaml) is not found.
- * @returns {Promise<void>} A promise that resolves when all packages are built.
  */
-export async function buildWorkspace(root: string): Promise<void> {
+export async function buildWorkspace(root: string) {
   if (!detectWorkspaceConfig(root)) {
     throw new Error(`Workspace configuration not found at ${root}`)
   }
@@ -21,11 +21,17 @@ export async function buildWorkspace(root: string): Promise<void> {
   const config = parseWorkspaceConfig(root)
   const allPackages = getWorkspacePackages(root, config)
   const packagesWithBuild = allPackages.filter((pkg) => pkg.hasBuildScript)
+
   if (packagesWithBuild.length === 0) {
-    console.log("No packages with build script found")
+    logger.warn("No packages with build script found")
     return
   }
 
+  logger.info(`Found ${packagesWithBuild.length} packages to build`)
+  logger.info("Building workspace packages...")
+
   const sortedPackages = topologicalSort(packagesWithBuild)
   await buildPackagesParallel(sortedPackages)
+
+  logger.info("All packages built successfully!")
 }

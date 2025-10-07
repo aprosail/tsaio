@@ -7,12 +7,8 @@ import type { PackageInfo, WorkspaceConfig } from "./types.js"
  *
  * @param root - The root directory of the workspace.
  * @param config - The workspace configuration.
- * @returns {PackageInfo[]} Array of package information.
  */
-export function getWorkspacePackages(
-  root: string,
-  config: WorkspaceConfig,
-): PackageInfo[] {
+export function getWorkspacePackages(root: string, config: WorkspaceConfig) {
   const packages: PackageInfo[] = []
 
   for (const packagePattern of config.packages) {
