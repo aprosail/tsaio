@@ -15,8 +15,5 @@
       "import": "./out/index.js",
       "default": "./out/index.js"
     }
-  },
-  "dependencies": {
-    "pino": "^10.0.0"
   }
 }

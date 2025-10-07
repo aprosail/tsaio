@@ -1,4 +1,4 @@
-import { logger } from "@/logger.js"
+import { logger } from "@/logger"
 import { buildPackagesParallel } from "@/workspace/build"
 import { detectWorkspaceConfig, parseWorkspaceConfig } from "@/workspace/config"
 import { getWorkspacePackages } from "@/workspace/packages"

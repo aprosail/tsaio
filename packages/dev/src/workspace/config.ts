@@ -1,6 +1,6 @@
+import type { WorkspaceConfig } from "@/workspace/types.js"
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import type { WorkspaceConfig } from "./types.js"
 
 /**
  * Detects whether workspace configuration exists.

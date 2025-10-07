@@ -1,7 +1,7 @@
-import { logger } from "@/logger.js"
+import { logger } from "@/logger"
+import type { PackageInfo } from "@/workspace/types"
 import { exec } from "node:child_process"
 import { promisify } from "node:util"
-import type { PackageInfo } from "./types.js"
 
 const execAsync = promisify(exec)
 
