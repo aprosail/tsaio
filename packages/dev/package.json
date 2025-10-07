@@ -9,6 +9,10 @@
     "build": "rolldown --config rolldown.config.ts"
   },
   "exports": {
-    "./tsconfig.json": "./settings/tsconfig.json"
+    "./tsconfig.json": "./settings/tsconfig.json",
+    ".": {
+      "import": "./out/index.js",
+      "types": "./out/index.d.ts"
+    }
   }
 }

@@ -22,10 +22,13 @@ function parsePathsToAliases(
   const aliases: Record<string, string> = {}
   for (const [key, value] of Object.entries(paths)) {
     if (!Array.isArray(value) || value.length === 0) continue
-    aliases[removeSuffix(key, "/*")] = resolve(
-      workingDir,
-      removePrefix(removeSuffix(value[0], "/*"), "./"),
-    )
+    const path = removePrefix(removeSuffix(value[0], "/*"), "./")
+
+    aliases[removeSuffix(key, "/*")] =
+      // Check if path is already absolute (Unix: /, Windows: C:\ etc.).
+      path.startsWith("/") || /^[A-Za-z]:[\\/]/.test(path)
+        ? path
+        : resolve(workingDir, path)
   }
   return aliases
 }

@@ -97,19 +97,18 @@ describe("parseTsconfigAliases", () => {
   })
 
   it("should handle edge cases and path normalization", () => {
-    // 合并多个边界情况测试
     const tsconfig = {
       compilerOptions: {
-        target: "ES2020", // missing paths
+        target: "ES2020", // Missing paths.
         paths: {
-          "": {}, // empty paths
-          "@bad/*": "./src/*", // non-array value
-          "@empty/*": [], // empty array
-          "@components/*": ["./components/*"], // normal case with /*
-          "@utils/*": ["./utils"], // mixed case
-          "@lib": ["./lib/*"], // no /* in key
-          "@multi/*": ["./src/*", "./lib/*", "./other/*"], // multiple paths
-          "@complex/*": ["./src/components/*"], // nested path
+          "": {}, // Empty paths.
+          "@bad/*": "./src/*", // Non-array value.
+          "@empty/*": [], // Empty array.
+          "@components/*": ["./components/*"], // Normal case with /*.
+          "@utils/*": ["./utils"], // Mixed case.
+          "@lib": ["./lib/*"], // No /* in key.
+          "@multi/*": ["./src/*", "./lib/*", "./other/*"], // Multiple paths.
+          "@complex/*": ["./src/components/*"], // Nested path.
         },
       },
     }
@@ -119,8 +118,56 @@ describe("parseTsconfigAliases", () => {
       "@components": "/project/components",
       "@utils": "/project/utils",
       "@lib": "/project/lib",
-      "@multi": "/project/src", // first path only
+      "@multi": "/project/src", // First path only.
       "@complex": "/project/src/components",
     })
+  })
+})
+
+describe("parseTsconfigAliases absolute paths", () => {
+  it("should always return absolute paths", () => {
+    const tsconfig = {
+      compilerOptions: {
+        paths: {
+          "@/*": ["./src/*"],
+          "@/deep/*": ["./src/deep/*"],
+          "@/relative/*": ["../src/*"], // Relative path going up.
+          "@/absolute/*": ["/absolute/path/*"], // Already absolute path.
+        },
+      },
+    }
+
+    const result = parseTsconfigAliases(tsconfig, "/project")
+
+    // Verify all returned paths are absolute.
+    for (const path of Object.values(result)) {
+      expect(path).toMatch(/^\//) // Should start with / (Unix absolute path).
+    }
+
+    expect(result).toEqual({
+      "@": "/project/src",
+      "@/deep": "/project/src/deep",
+      "@/relative": "/project/../src", // Resolve handles relative paths.
+      "@/absolute": "/absolute/path", // Absolute path remains unchanged.
+    })
+  })
+
+  it("should handle Windows-style paths correctly", () => {
+    const tsconfig = { compilerOptions: { paths: { "@/*": ["./src/*"] } } }
+
+    // Simulate Windows environment.
+    const originalPlatform = process.platform
+    Object.defineProperty(process, "platform", { value: "win32" })
+
+    const result = parseTsconfigAliases(tsconfig, "C:\\project")
+
+    // Restore original platform.
+    Object.defineProperty(process, "platform", { value: originalPlatform })
+
+    // On Windows, absolute paths should start with drive letter.
+    if (process.platform === "win32") {
+      // oxlint-disable-next-line no-conditional-expect
+      expect(result["@"]).toMatch(/^[A-Z]:\\/)
+    }
   })
 })
