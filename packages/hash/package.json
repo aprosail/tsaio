@@ -15,6 +15,9 @@
     "test": "vitest run",
     "dev": "vitest"
   },
+  "dependencies": {
+    "@tsaio/utils": "workspace:*"
+  },
   "devDependencies": {
     "@tsaio/dev": "workspace:*"
   }

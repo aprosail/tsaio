@@ -1,3 +1,4 @@
+import { removePrefix } from "@tsaio/utils"
 import { createHash } from "node:crypto"
 import { existsSync, statSync } from "node:fs"
 import { dirname, join, relative, resolve } from "node:path"
@@ -99,15 +100,10 @@ export function hashPosition(length = 16, algorithm = "sha256"): string {
 
   let urlToHash = position.url
   const packageRoot = detectPackageRoot(position.url)
-  // todo: reuse remove prefix...
   if (packageRoot && position.url.startsWith("file://")) {
-    const filePath = position.url.replace("file://", "")
-    try {
-      const relativePath = relative(packageRoot, filePath)
-      urlToHash = relativePath
-    } catch {
-      urlToHash = position.url
-    }
+    const filePath = removePrefix(position.url, "file://")
+    const relativePath = relative(packageRoot, filePath)
+    urlToHash = relativePath
   }
 
   hash.update(urlToHash)
