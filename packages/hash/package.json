@@ -5,9 +5,9 @@
   "type": "module",
   "exports": {
     ".": {
-      "default": "./out/index.js",
+      "types": "./out/index.d.ts",
       "import": "./out/index.js",
-      "types": "./out/index.d.ts"
+      "default": "./out/index.js"
     }
   },
   "scripts": {
