@@ -1,3 +1,4 @@
+import { glob } from "glob"
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import type { PackageInfo, WorkspaceConfig } from "./types.js"
@@ -8,23 +9,19 @@ import type { PackageInfo, WorkspaceConfig } from "./types.js"
  * @param root - The root directory of the workspace.
  * @param config - The workspace configuration.
  */
-export function getWorkspacePackages(root: string, config: WorkspaceConfig) {
+export async function getWorkspacePackages(
+  root: string,
+  config: WorkspaceConfig,
+) {
   const packages: PackageInfo[] = []
 
   for (const packagePattern of config.packages) {
-    // Simple glob pattern matching (supports * wildcard).
-    if (packagePattern.includes("*")) {
-      const baseDir = packagePattern.split("*")[0]
-      const fullPath = join(root, baseDir)
+    // Use glob library for proper pattern matching
+    const pattern = join(root, packagePattern, "package.json")
+    const matches = await glob(pattern, { ignore: "node_modules/**" })
 
-      if (existsSync(fullPath)) {
-        const dirName = baseDir.replace(/\/$/, "")
-        const packagePath = join(root, dirName)
-        const packageInfo = getPackageInfo(packagePath)
-        if (packageInfo) packages.push(packageInfo)
-      }
-    } else {
-      const packagePath = join(root, packagePattern)
+    for (const packageJsonPath of matches) {
+      const packagePath = join(packageJsonPath, "..")
       const packageInfo = getPackageInfo(packagePath)
       if (packageInfo) packages.push(packageInfo)
     }

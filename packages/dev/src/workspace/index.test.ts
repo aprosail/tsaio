@@ -8,6 +8,7 @@ const mockJoin = vi.hoisted(() =>
   vi.fn((...args: string[]) => args.join("/").replace(/\/+/g, "/")),
 )
 const mockExec = vi.hoisted(() => vi.fn())
+const mockGlob = vi.hoisted(() => vi.fn())
 
 // Mock modules.
 vi.mock("node:fs", () => ({
@@ -27,12 +28,22 @@ vi.mock("node:util", () => ({
   promisify: vi.fn((fn) => fn),
 }))
 
+vi.mock("glob", () => ({
+  glob: mockGlob,
+}))
+
 describe("buildWorkspace", () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it("should build workspace successfully", async () => {
+    // Mock glob to return package.json paths
+    mockGlob.mockResolvedValue([
+      "/workspace/packages/css/package.json",
+      "/workspace/packages/utils/package.json",
+    ])
+
     // Mock workspace config detection.
     mockExistsSync.mockImplementation((path: string) => {
       if (typeof path === "string" && path === "/workspace/package.json")
@@ -93,6 +104,12 @@ describe("buildWorkspace", () => {
   })
 
   it("should handle no packages with build script", async () => {
+    // Mock glob to return package.json paths
+    mockGlob.mockResolvedValue([
+      "/workspace/packages/css/package.json",
+      "/workspace/packages/utils/package.json",
+    ])
+
     mockExistsSync.mockImplementation((path: string) => {
       if (typeof path === "string" && path === "/workspace/package.json")
         return true

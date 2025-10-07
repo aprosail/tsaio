@@ -19,7 +19,7 @@ export async function buildWorkspace(root: string) {
   }
 
   const config = parseWorkspaceConfig(root)
-  const allPackages = getWorkspacePackages(root, config)
+  const allPackages = await getWorkspacePackages(root, config)
   const packagesWithBuild = allPackages.filter((pkg) => pkg.hasBuildScript)
 
   if (packagesWithBuild.length === 0) {

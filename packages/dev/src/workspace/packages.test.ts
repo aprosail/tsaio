@@ -8,6 +8,7 @@ const mockReadFileSync = vi.hoisted(() => vi.fn())
 const mockJoin = vi.hoisted(() =>
   vi.fn((...args: string[]) => args.join("/").replace(/\/+/g, "/")),
 )
+const mockGlob = vi.hoisted(() => vi.fn())
 
 // Mock modules.
 vi.mock("node:fs", () => ({
@@ -17,6 +18,10 @@ vi.mock("node:fs", () => ({
 
 vi.mock("node:path", () => ({
   join: mockJoin,
+}))
+
+vi.mock("glob", () => ({
+  glob: mockGlob,
 }))
 
 describe("getPackageInfo", () => {
@@ -105,7 +110,14 @@ describe("getWorkspacePackages", () => {
     vi.clearAllMocks()
   })
 
-  it("should get packages from workspace config", () => {
+  it("should get packages from workspace config", async () => {
+    // Mock glob to return package.json paths
+    mockGlob.mockResolvedValue([
+      "/workspace/packages/css/package.json",
+      "/workspace/packages/utils/package.json",
+      "/workspace/packages/hash/package.json",
+    ])
+
     // Mock that package.json exists for specific paths.
     mockExistsSync.mockImplementation((path: string) => {
       if (typeof path === "string" && path.includes("package.json")) return true
@@ -145,7 +157,7 @@ describe("getWorkspacePackages", () => {
       packages: ["packages/css", "packages/utils", "packages/hash"],
     }
 
-    const result = getWorkspacePackages("/workspace", config)
+    const result = await getWorkspacePackages("/workspace", config)
 
     // Should find packages with package.json.
     expect(result.length).toBeGreaterThan(0)
