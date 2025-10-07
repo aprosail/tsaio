@@ -1,0 +1,12 @@
+{
+  "name": "@tsaio/utils",
+  "description": "Shared utilities and settings behind the tsaio packages.",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "rolldown --config rolldown.config.ts"
+  },
+  "devDependencies": {
+    "@tsaio/dev": "workspace:*"
+  }
+}

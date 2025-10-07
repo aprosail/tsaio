@@ -99,6 +99,7 @@ export function hashPosition(length = 16, algorithm = "sha256"): string {
 
   let urlToHash = position.url
   const packageRoot = detectPackageRoot(position.url)
+  // todo: reuse remove prefix...
   if (packageRoot && position.url.startsWith("file://")) {
     const filePath = position.url.replace("file://", "")
     try {

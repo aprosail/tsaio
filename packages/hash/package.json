@@ -7,6 +7,6 @@
     "dev": "vitest"
   },
   "dependencies": {
-    "@tsaio/tsconfig": "workspace:*"
+    "@tsaio/dev": "workspace:*"
   }
 }
