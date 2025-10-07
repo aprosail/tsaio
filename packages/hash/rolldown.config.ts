@@ -1,10 +1,9 @@
-import { join } from "node:path"
+import { parseTsconfigAliases } from "@tsaio/dev"
 import { defineConfig } from "rolldown"
 import { dts } from "rolldown-plugin-dts"
 
 export default defineConfig({
-  // Cannot apply aliases when loading config, so cannot use for itself.
-  resolve: { alias: { "@": join(import.meta.dirname, "src") } },
+  resolve: { alias: parseTsconfigAliases() },
   plugins: [dts({ sourcemap: true })],
   external: [/^node:/],
   input: "src/index.ts",

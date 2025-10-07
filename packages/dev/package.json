@@ -11,6 +11,7 @@
   "exports": {
     "./tsconfig.json": "./settings/tsconfig.json",
     ".": {
+      "default": "./out/index.js",
       "import": "./out/index.js",
       "types": "./out/index.d.ts"
     }

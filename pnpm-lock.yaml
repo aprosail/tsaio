@@ -92,9 +92,9 @@ importers:
   packages/dev: {}
 
   packages/hash:
-    dependencies:
+    devDependencies:
       '@tsaio/dev':
-        specifier: workspace:*
+        specifier: link:../dev
         version: link:../dev
 
   packages/utils:
