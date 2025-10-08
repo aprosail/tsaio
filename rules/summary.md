@@ -30,3 +30,10 @@
 3. Single quotes.
 4. Arrow functions.
 5. Descriptive naming.
+
+## Logging
+
+1. Use `@tsaio/dev` logger in development tools.
+2. Use pino for structured logging in examples.
+3. Avoid console output in production code.
+4. Provide clear error messages for diagnostics.

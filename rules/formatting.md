@@ -9,8 +9,9 @@
 ## Code Quality
 
 1. Follow Oxlint rules.
-2. No console statements.
-3. Fix lint errors before committing.
+2. No console statements in production code.
+3. Use structured logging instead of console output.
+4. Fix lint errors before committing.
 
 ## Commands
 
