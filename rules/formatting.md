@@ -6,6 +6,14 @@
 2. No semicolons.
 3. 2-space indentation.
 
+## Documentation Formatting
+
+1. Use ordered lists for sequential instructions.
+2. Always include periods at the end of list items.
+3. Keep ordered list items concise with minimal line width.
+4. For lengthy content, use paragraphs instead of long list items.
+5. Maintain consistent formatting across all documentation.
+
 ## Code Quality
 
 1. Follow Oxlint rules.
