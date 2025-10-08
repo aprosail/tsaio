@@ -1,5 +1,5 @@
+import { parseTsconfigAliases } from "@/alias"
 import { describe, expect, it, vi } from "vitest"
-import { parseTsconfigAliases } from "./alias.js"
 
 vi.mock("node:fs", () => ({
   existsSync: vi.fn(),

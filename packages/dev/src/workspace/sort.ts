@@ -1,4 +1,4 @@
-import type { PackageInfo } from "./types.js"
+import type { PackageInfo } from "@/workspace/types"
 
 /**
  * Performs topological sort on packages based on dependencies.

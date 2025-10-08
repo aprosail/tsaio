@@ -1,5 +1,5 @@
+import { css, cssVariable, type CssClass, type CssVariable } from "@/index"
 import { expect, test } from "vitest"
-import { css, cssVariable, type CssClass, type CssVariable } from "./index"
 
 test("cssVariable returns a CssVariable type", () => {
   const variable = cssVariable()

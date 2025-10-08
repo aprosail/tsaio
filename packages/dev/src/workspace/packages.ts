@@ -1,7 +1,7 @@
+import type { PackageInfo, WorkspaceConfig } from "@/workspace/types"
 import { glob } from "glob"
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import type { PackageInfo, WorkspaceConfig } from "./types.js"
 
 /**
  * Gets all packages in the workspace.

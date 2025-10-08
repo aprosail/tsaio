@@ -1,5 +1,5 @@
+import { prepareRules } from "@/rules"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { prepareRules } from "./rules.js"
 
 // Mock file system functions using vi.hoisted
 const mockExistsSync = vi.hoisted(() => vi.fn())
