@@ -6,6 +6,11 @@ Desktop.ini
 *.ipr
 *.iws
 
+# Rules (auto generated).
+.roo
+CLAUDE.md
+QWEN.md
+
 # Node.
 node_modules
 out
